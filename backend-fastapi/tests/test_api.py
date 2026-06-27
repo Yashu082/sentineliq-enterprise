@@ -40,19 +40,19 @@ def test_token_protection_audit_run_without_token():
             "project_spec": "This is a test project specification."
         }
     )
-    assert response.status_code == 403, f"Expected 403 Forbidden, got {response.status_code}"
+    assert response.status_code == 401, f"Expected 401 Unauthorized, got {response.status_code}"
 
 
 def test_token_protection_audit_history_without_token():
     """Test that hitting /audit/history without a valid Bearer token header explicitly fails and blocks access with 403."""
     response = client.get("/audit/history")
-    assert response.status_code == 403, f"Expected 403 Forbidden, got {response.status_code}"
+    assert response.status_code == 401, f"Expected 401 Unauthorized, got {response.status_code}"
 
 
 def test_token_protection_audit_get_without_token():
     """Test that hitting /audit/{audit_id} without a valid Bearer token header explicitly fails and blocks access with 403."""
     response = client.get("/audit/1")
-    assert response.status_code == 403, f"Expected 403 Forbidden, got {response.status_code}"
+    assert response.status_code == 401, f"Expected 401 Unauthorized, got {response.status_code}"
 
 
 def test_health_endpoint():
