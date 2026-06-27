@@ -42,7 +42,7 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
 ### Phase 6: Documentation
 - **Architecture Documentation**: Complete system architecture overview
 - **Developer Guide**: Setup, development, and contribution guidelines
-- **Deployment Guide**: Docker, Kubernetes, and cloud deployment strategies
+- **Deployment Guide**: Production deployment strategies and environment configuration
 - **API Documentation**: Complete API reference with examples
 - **System Design Document**: Detailed design decisions and trade-offs
 - **Agent Interaction Diagram**: Multi-agent pipeline visualization
@@ -62,16 +62,16 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
                        │ CORS-Protected
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    API Gateway Layer                         │
+│                    API Gateway Layer                        │
 │  FastAPI + Uvicorn + Rate Limiting + Error Handling         │
-│  Port: 8000                                                  │
+│  Port: 8000                                                 │
 └──────────────────────┬──────────────────────────────────────┘
                        │
         ┌──────────────┴──────────────┐
         ▼                             ▼
 ┌──────────────────┐        ┌──────────────────┐
 │   AI Engine      │        │  Data Layer      │
-│  5-Agent Pipeline│        │  SQLite + WAL     │
+│  5-Agent Pipeline│        │  SQLite + WAL    |
 │  - Requirements  │        │  User Isolation  │
 │  - Validation    │        │  Audit History   │
 │  - Planning      │        │  Migrations      │
@@ -101,7 +101,7 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
 | Database | SQLite (WAL mode) | Data Storage |
 | AI Models | Gemini 2.5 Flash, Llama 3.3 | LLM Providers |
 | Testing | Pytest, HTTPX | Test Framework |
-| Deployment | Docker, GitHub Actions | CI/CD |
+| Deployment | Uvicorn, Vite, GitHub Actions | Server & CI/CD |
 
 ---
 
@@ -225,32 +225,60 @@ Each audit report includes:
 
 ## 🚀 Deployment
 
-### Docker Deployment (Backend)
+### Local Development Deployment
+
+#### Backend Server
 
 ```bash
 cd backend-fastapi
-docker build -t sentineliq-backend .
-docker run -p 8000:8000 --env-file .env sentineliq-backend
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with your API keys
+python -m uvicorn main:app --reload --port 8000
 ```
 
-### Docker Deployment (Frontend)
+#### Frontend Server
 
 ```bash
 cd frontend-react
-npm run build
-docker build -t sentineliq-frontend .
-docker run -p 3000:80 sentineliq-frontend
+npm install
+npm run dev
 ```
 
 ### Production Deployment
 
-For production deployment, see `docs/DEPLOYMENT_GUIDE.md` for detailed instructions on:
-- Docker Compose orchestration
-- Kubernetes deployment manifests
+#### Backend Production
+
+```bash
+cd backend-fastapi
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+#### Frontend Production Build
+
+```bash
+cd frontend-react
+npm run build
+# Serve the dist/ directory with a web server (nginx, apache, etc.)
+```
+
+#### Environment Variables
+
+Set the frontend API base URL for production:
+
+```bash
+# In frontend-react/.env.production
+VITE_API_BASE=https://your-backend-domain.com
+```
+
+For detailed production deployment strategies, see `docs/DEPLOYMENT_GUIDE.md` for instructions on:
 - Cloud provider deployment (AWS, GCP, Azure)
 - Environment configuration
 - Monitoring and logging setup
 - SSL/TLS configuration
+- Reverse proxy configuration (nginx, apache)
 
 ---
 
@@ -307,6 +335,6 @@ Licensed under the MIT License.
 ## 📞 Support
 
 For issues, questions, or contributions:
-- GitHub Issues: [Project Repository]
+- GitHub Issues: https://github.com/Yashu082/sentineliq-enterprise/issues
 - Documentation: See `docs/` directory
 - Technical Reference: `TECHNICAL_REFERENCE_MANUAL.md`
