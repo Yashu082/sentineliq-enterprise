@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+google-genai
+groq
+python-dotenv
+pydantic
+python-jose[cryptography]
+pytest
+httpx
