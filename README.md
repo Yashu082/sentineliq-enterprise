@@ -1,5 +1,25 @@
 # 🛡️ SentinelIQ Enterprise v3.0: Multi-Agent AI Architecture Review Platform
 
+<div align="center">
+
+[![CI/CD](https://github.com/Yashu082/sentineliq-enterprise/actions/workflows/ci.yml/badge.svg)](https://github.com/Yashu082/sentineliq-enterprise/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688.svg?logo=fastapi)](https://fastapi.tiangolo.com/)
+[![React](https://img.shields.io/badge/React-18-61DAFB.svg?logo=react)](https://react.dev/)
+[![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?logo=vercel)](https://sentineliq-enterprise.vercel.app)
+[![Multi-Agent](https://img.shields.io/badge/AI-5--Agent%20Pipeline-purple.svg)](https://github.com/Yashu082/sentineliq-enterprise)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/Yashu082/sentineliq-enterprise/pulls)
+
+**Production-grade AI architecture review platform for CTOs, architects, and engineering managers.**
+
+[🚀 Live Demo](https://sentineliq-enterprise.vercel.app) • [📚 Docs](./docs) • [🐛 Report Bug](https://github.com/Yashu082/sentineliq-enterprise/issues/new?template=bug_report.md) • [💡 Request Feature](https://github.com/Yashu082/sentineliq-enterprise/issues/new?template=feature_request.md)
+
+</div>
+
+---
+
 SentinelIQ Enterprise is a production-grade, enterprise AI architecture review platform designed for CTOs, senior software architects, and engineering managers. It ingests Product Requirement Documents (PRDs) and orchestrates a 5-agent AI pipeline to provide comprehensive architecture analysis, risk assessments, and executive insights with confidence scoring, traceability, and automated artifact generation.
 
 ---
@@ -42,7 +62,7 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
 ### Phase 6: Documentation
 - **Architecture Documentation**: Complete system architecture overview
 - **Developer Guide**: Setup, development, and contribution guidelines
-- **Deployment Guide**: Docker, Kubernetes, and cloud deployment strategies
+- **Deployment Guide**: Production deployment strategies and environment configuration
 - **API Documentation**: Complete API reference with examples
 - **System Design Document**: Detailed design decisions and trade-offs
 - **Agent Interaction Diagram**: Multi-agent pipeline visualization
@@ -55,23 +75,23 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                     Frontend Layer                          │
-│  React 18 + Vite + Custom CSS + React Markdown               │
+│  React 18 + Vite + Custom CSS + React Markdown              │
 │  Port: 3000                                                 │
 └──────────────────────┬──────────────────────────────────────┘
                        │ HTTPS + JWT Bearer Token
                        │ CORS-Protected
                        ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    API Gateway Layer                         │
+│                    API Gateway Layer                        │
 │  FastAPI + Uvicorn + Rate Limiting + Error Handling         │
-│  Port: 8000                                                  │
+│  Port: 8000                                                 │
 └──────────────────────┬──────────────────────────────────────┘
                        │
         ┌──────────────┴──────────────┐
         ▼                             ▼
 ┌──────────────────┐        ┌──────────────────┐
 │   AI Engine      │        │  Data Layer      │
-│  5-Agent Pipeline│        │  SQLite + WAL     │
+│  5-Agent Pipeline│        │  SQLite + WAL    │
 │  - Requirements  │        │  User Isolation  │
 │  - Validation    │        │  Audit History   │
 │  - Planning      │        │  Migrations      │
@@ -101,7 +121,7 @@ SentinelIQ Enterprise is a production-grade, enterprise AI architecture review p
 | Database | SQLite (WAL mode) | Data Storage |
 | AI Models | Gemini 2.5 Flash, Llama 3.3 | LLM Providers |
 | Testing | Pytest, HTTPX | Test Framework |
-| Deployment | Docker, GitHub Actions | CI/CD |
+| Deployment | Uvicorn, Vite, GitHub Actions | Server & CI/CD |
 
 ---
 
@@ -225,61 +245,55 @@ Each audit report includes:
 
 ## 🚀 Deployment
 
-### Docker Deployment (Backend)
+### Local Development
 
 ```bash
-cd backend-fastapi
-docker build -t sentineliq-backend .
-docker run -p 8000:8000 --env-file .env sentineliq-backend
+# Backend
+cd backend-fastapi && python -m uvicorn main:app --reload --port 8000
+
+# Frontend
+cd frontend-react && npm run dev
 ```
 
-### Docker Deployment (Frontend)
+### Production
 
 ```bash
-cd frontend-react
+# Backend
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+
+# Frontend
 npm run build
-docker build -t sentineliq-frontend .
-docker run -p 3000:80 sentineliq-frontend
+# serve dist/ with nginx or any static host
 ```
 
-### Production Deployment
+Set the frontend API URL for production:
+```bash
+# frontend-react/.env.production
+VITE_API_BASE=https://your-backend-domain.com
+```
 
-For production deployment, see `docs/DEPLOYMENT_GUIDE.md` for detailed instructions on:
-- Docker Compose orchestration
-- Kubernetes deployment manifests
-- Cloud provider deployment (AWS, GCP, Azure)
-- Environment configuration
-- Monitoring and logging setup
-- SSL/TLS configuration
+For full deployment strategies see `docs/DEPLOYMENT_GUIDE.md` — covers cloud providers (AWS, GCP, Azure), SSL/TLS, reverse proxy, monitoring.
 
 ---
 
 ## 🧪 Testing
 
-The test suite includes:
-
-- **API Tests**: Endpoint validation and authentication
-- **Validation Tests**: Cross-agent validation logic
-- **Architecture Generator Tests**: Artifact generation
-- **Production Hardening Tests**: Rate limiting, error handling, retry logic
-- **Database Tests**: User isolation and data integrity
-
-Run tests with coverage:
-
 ```bash
 cd backend-fastapi
+pytest tests/ -v
 pytest tests/ --cov=core --cov=database --cov-report=html
 ```
+
+Covers: API endpoints, cross-agent validation, architecture generation, rate limiting, error handling, user isolation.
 
 ---
 
 ## 🤝 Contributing
 
 1. Create a feature branch
-2. Make your changes
-3. Add tests for new functionality
-4. Ensure all tests pass
-5. Submit a pull request
+2. Make your changes with tests
+3. Ensure all tests pass
+4. Submit a pull request
 
 See `docs/DEVELOPER_GUIDE.md` for detailed contribution guidelines.
 
@@ -306,7 +320,8 @@ Licensed under the MIT License.
 
 ## 📞 Support
 
-For issues, questions, or contributions:
-- GitHub Issues: [Project Repository]
-- Documentation: See `docs/` directory
-- Technical Reference: `TECHNICAL_REFERENCE_MANUAL.md`
+- 🐛 [Bug Reports](https://github.com/Yashu082/sentineliq-enterprise/issues/new?template=bug_report.md)
+- 💡 [Feature Requests](https://github.com/Yashu082/sentineliq-enterprise/issues/new?template=feature_request.md)
+- 🤖 [AI Pipeline Issues](https://github.com/Yashu082/sentineliq-enterprise/issues/new?template=agent_issue.md)
+- 📚 [Documentation](./docs)
+- 🔧 [Technical Reference](./TECHNICAL_REFERENCE_MANUAL.md)
